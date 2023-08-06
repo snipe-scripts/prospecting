@@ -1,3 +1,7 @@
+-----------------For support, scripts, and more----------------
+--------------- https://discord.gg/VGYkkAYVv2  -------------
+---------------------------------------------------------------
+
 Config = {}
 
 Config.Core = "QBCore" -- ESX or QBCore

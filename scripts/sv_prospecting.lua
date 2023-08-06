@@ -1,3 +1,7 @@
+-----------------For support, scripts, and more----------------
+--------------- https://discord.gg/VGYkkAYVv2  -------------
+---------------------------------------------------------------
+
 QBCore, ESX = nil, nil
 
 if Config.Core == "QBCore" then
