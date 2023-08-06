@@ -14,8 +14,8 @@ Config.Chances = {
     ["rare"] = 15, -- 15%
     ["epic"] = 5, -- 5%
 }
-
-Config.DetectorItem = "detector"
+Config.ShowDrawMaker = true -- show draw marker on in game while prospecting
+Config.DetectorItem = "prop_chain"
 
 Config.Zones = {
     [1] = {coords = vector3(1429.933, 1222.926, 110.88), data = "loc1", zoneSize = 100, zoneLocations = 200},

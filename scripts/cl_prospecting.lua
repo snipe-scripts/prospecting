@@ -435,12 +435,22 @@ function ProspectingThreads()
                     renderCircle = false
                     circleR, circleG, circleB = 150, 255, 150
                     _circleR, _circleG, _circleB = 150, 255, 150
+                    if Config.ShowDrawMaker then
+                        circleSize = (circleScale % 100) / 100
+                        circleA = math.floor(255 - ((circleScale % 100) / 100) * 255)
+                        DrawMarker(1, pos, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, circleSize, circleSize, 0.1, circleR, circleG, circleB, circleA)
+                    end
                 elseif scannerState == "slow" then
                     renderCircle = true
                     circleScale = circleScale + scannerScale
                     circleR, circleG, circleB = 150, 255, 150
                     if frametime > scannerFrametime then
                         frametime = 0.0
+                    end
+                    if Config.ShowDrawMaker then
+                        circleSize = (circleScale % 100) / 100
+                        circleA = math.floor(255 - ((circleScale % 100) / 100) * 255)
+                        DrawMarker(1, pos, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, circleSize, circleSize, 0.1, circleR, circleG, circleB, circleA)
                     end
                 elseif scannerState == "medium" then
                     renderCircle = true
@@ -466,6 +476,20 @@ function ProspectingThreads()
                         -- PlaySoundFrontend(-1, "TIMER_STOP", "HUD_MINI_GAME_SOUNDSET", 0)
                         if scannerAudio then PlaySoundFrontend(-1, "BOATS_PLANES_HELIS_BOOM", "MP_LOBBY_SOUNDS", 0) end
                     end
+                    if Config.ShowDrawMaker then
+                        circleA = 150
+                        circleSize = 1.20 * circleScaleMultiplier
+                        DrawMarker(1, pos, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, circleSize, circleSize, 0.2, circleR, circleG, circleB, circleA)
+                        DrawMarker(6, pos, 0.0, 0.0, 0.0, 270.0, 0.0, 0.0, circleSize, 0.1, circleSize, circleR, circleG, circleB, circleA)
+                        circleA = 200
+                        circleSize = 0.70 * circleScaleMultiplier
+                        DrawMarker(1, pos, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, circleSize, circleSize, 0.2, circleR, circleG, circleB, circleA)
+                        DrawMarker(6, pos, 0.0, 0.0, 0.0, 270.0, 0.0, 0.0, circleSize, 0.1, circleSize, circleR, circleG, circleB, circleA)
+                        circleA = 255
+                        circleSize = 0.20 * circleScaleMultiplier
+                        DrawMarker(1, pos, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, circleSize, circleSize, 0.2, circleR, circleG, circleB, circleA)
+                        DrawMarker(6, pos, 0.0, 0.0, 0.0, 270.0, 0.0, 0.0, circleSize, 0.1, circleSize, circleR, circleG, circleB, circleA)
+                    end
                 end
                 if renderCircle then
                     if circleScale > 100 then
@@ -475,6 +499,13 @@ function ProspectingThreads()
                         _circleR, _circleG, _circleB = circleR, circleG, circleB
                         -- PlaySoundFrontend(-1, "BOATS_PLANES_HELIS_BOOM", "MP_LOBBY_SOUNDS", 0)
                         if scannerAudio then PlaySoundFrontend(-1, "ATM_WINDOW", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0) end
+                        
+                    end
+                    if Config.ShowDrawMaker then
+                        circleSize = ((circleScale % 100) / 100) * circleScaleMultiplier
+                        circleA = math.floor(255 - ((circleScale % 100) / 100) * 155)
+                        DrawMarker(1, pos, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, circleSize, circleSize, 0.2, _circleR, _circleG, _circleB, circleA)
+                        DrawMarker(6, pos, 0.0, 0.0, 0.0, 270.0, 0.0, 0.0, circleSize, 0.1, circleSize, _circleR, _circleG, _circleB, circleA)
                     end
                 end
 
