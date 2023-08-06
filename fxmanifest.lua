@@ -21,13 +21,6 @@ shared_scripts{
     "config.lua",
 }
 
--- dependencies {'instructional-buttons'}
--- client_script '@instructional-buttons/include.lua'
-
--- dependencies {'multilingual'}
--- function language_file(fn) file(fn) language_json(fn) end
--- language_file 'lang.json'
-
 client_script 'scripts/cl_*.lua'
 server_scripts {
     'scripts/sv_*.lua',
