@@ -92,11 +92,12 @@ end
 function OnCollected(player, resource, data, x, y, z)
     
     local items = {}
+    math.randomseed(os.time())
     local randomizer = math.random(1, 100)
-    if randomizer < 5 then
-        items = Config.Items[data]["rare"] or Config.DefaultItems
-    elseif randomizer < 15 and randomizer > 5 then
+    if randomizer < Config.Chances.epic then
         items = Config.Items[data]["epic"] or Config.DefaultItems
+    elseif randomizer < Config.Chances.rare and randomizer > Config.Chances.epic then
+        items = Config.Items[data]["rare"] or Config.DefaultItems
     else
         items = Config.Items[data]["common"] or Config.DefaultItems
     end
