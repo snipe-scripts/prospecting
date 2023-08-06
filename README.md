@@ -1,14 +1,36 @@
-# Prospecting QBCore (WIP for ESX)
+# Prospecting QBCore/ESX
+
+## Original Github Repository
+https://github.com/glitchdetector/fivem-prospecting
+
+## Installation
+- Add metaldetector item in your items.lua
+
+### QBCore
+```lua
+['detector']                   = {['name'] = 'detector',          ['label'] = 'Detector',          ['weight'] = 100,       ['type'] = 'item',    ['image'] = 'detector.png',        ['unique'] = false, ['useable'] = true, ['shouldClose'] = true, ['combinable'] = nil, ['description']  = 'Go find some things'},
+```
+
+### ESX
+```sql
+INSERT INTO `items` (`name`, `label`, `weight`, `rare`, `can_remove`) VALUES ('bodycam', 'Body Cam', 1, 0, 1)
+```
+
+## Support
+
+- Discord: https://discord.gg/VGYkkAYVv2
+- Website : https://snipe.tebex.io
+- If you have a custom mlo and have a screen in there which you want to use with this script, make sure you make the polyzones and target before you ask in my discord on how to find texture dictionary and texture name. I can only help with the texture dictionaries and texture name if you do the other steps first.
 
 ## Goals
-- Remove dependency with instructional buttons
-- Make it item based
-- Remove Multilingual dependency (create a basic locale instead)
-- Add multiple locations and configure return items
+- Remove dependency with instructional buttons - **Done**
+- Make it item based - **Done**
+- Remove Multilingual dependency (create a basic locale instead) - **Done**
+- Add multiple locations and configure return items - **Done**
 
 If you are interested, you can create pr's for this and make sure they are tested.
 
-#
+# This is the original README below this part
 
 #### A prospecting mini-game handler for FiveM. Allows resources to control via an API.
 
@@ -210,5 +232,4 @@ A copy of this README must also be present with re-distributions.
 ## License
 [Attribution-NoDerivs 3.0 Unported (CC BY-ND 3.0)](https://creativecommons.org/licenses/by-nd/3.0/)
 
-## Original Github Repository
-https://github.com/glitchdetector/fivem-prospecting
+

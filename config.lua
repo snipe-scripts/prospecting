@@ -1,5 +1,8 @@
 Config = {}
 
+Config.Core = "QBCore" -- ESX or QBCore
+Config.PlayerLoadedEvent = "QBCore:Client:OnPlayerLoaded" -- esx:playerLoaded || QBCore:Client:OnPlayerLoaded
+
 Config.ShowBlip = true -- show blip on map
 
 Config.Chances = {
@@ -8,9 +11,11 @@ Config.Chances = {
     ["epic"] = 5, -- 5%
 }
 
+Config.DetectorItem = "detector"
+
 Config.Zones = {
-    [1] = {coords = vector3(1429.933, 1222.926, 110.88), data = "loc1", zoneSize = 100, zoneLocations = 500},
-    [2] = {coords = vector3(1615.378, 2095.902, 85.007), data = "loc2", zoneSize = 100, zoneLocations = 1000},
+    [1] = {coords = vector3(1429.933, 1222.926, 110.88), data = "loc1", zoneSize = 100, zoneLocations = 200},
+    [2] = {coords = vector3(1615.378, 2095.902, 85.007), data = "loc2", zoneSize = 100, zoneLocations = 100},
 }
 
 Config.DefaultItems = {"metalscrap"} -- will be selected if you dont put the common, rare and epic items in the config

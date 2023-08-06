@@ -1,20 +1,14 @@
-QBCore = exports["qb-core"]:GetCoreObject()
+QBCore, ESX = nil, nil
 
-local DEBUG = false
-local function debugLog() end
-if DEBUG then debugLog = function(...)
-    print(...)
-end end
+if Config.Core == "QBCore" then
+    QBCore = exports['qb-core']:GetCoreObject()
+elseif Config.Core == "ESX" then
+    ESX = exports['es_extended']:getSharedObject()
+end
 
 local PROSPECTING_STATUS = {}
 local PROSPECTING_TARGETS = {}
 
--- Multiplier for distance to check
--- 1.0 is default, allows ~3m around target
--- 2.0 allows ~1.5m around target
--- 10.0 allows ~0.3m around target
--- Alters all distance checks, so higher means you need to be closer to the target to get a signal
--- Each controller resource can define their own difficulty
 local PROSPECTING_DIFFICULTIES = {}
 
 --[[ Common ]]
@@ -24,7 +18,6 @@ function UpdateProspectingTargets(player)
         local difficulty = PROSPECTING_DIFFICULTIES[target.resource] or 1.0
         targets[#targets + 1] = {target.x, target.y, target.z, difficulty}
     end
-    debugLog("new targets", json.encode(targets))
     TriggerClientEvent("prospecting:setTargetPool", player, targets)
 end
 
@@ -36,18 +29,21 @@ function InsertProspectingTargets(resource, targets)
     for _, target in next, targets do
         InsertProspectingTarget(resource, target.x, target.y, target.z, target.data)
     end
-    -- UpdateProspectingTargets(-1)
 end
 
-function RemoveProspectingTarget(index)
-    local new_targets = {}
-    for n, target in next, PROSPECTING_TARGETS do
-        if n ~= index then
-            new_targets[#new_targets + 1] = target
+local function RemoveTargetIndex(coords)
+    for index, target in next, PROSPECTING_TARGETS do
+        local dx, dy, dz = target.x, target.y, target.z
+        if math.floor(dx) == math.floor(coords.x) and math.floor(dy) == math.floor(coords.y) and math.floor(dz) == math.floor(coords.z) then
+            table.remove(PROSPECTING_TARGETS, index)
+            break
         end
     end
-    PROSPECTING_TARGETS = new_targets
-    UpdateProspectingTargets(-1)
+end
+
+function RemoveProspectingTarget(coords)
+    RemoveTargetIndex(coords)
+    TriggerClientEvent("prospecting:client:removeTarget", -1, coords)
 end
 
 function FindMatchingPickup(x, y, z)
@@ -61,33 +57,36 @@ function FindMatchingPickup(x, y, z)
 end
 
 function HandleProspectingPickup(player, index, x, y, z)
-    debugLog("pickup", player, "idx", index, "pos", x, y, z)
     local target = PROSPECTING_TARGETS[index]
     if target then
         local dx, dy, dz = target.x, target.y, target.z
         local resource, data = target.resource, target.data
         if math.floor(dx) == math.floor(x) and math.floor(dy) == math.floor(y) and math.floor(dz) == math.floor(z) then
-            debugLog("pickup matches")
-            RemoveProspectingTarget(index)
-            TriggerEvent("prospecting:onCollected", player, resource, data, x, y, z)
+            RemoveProspectingTarget(vec3(x, y, z))
+            OnCollected(player, resource, data, x, y, z)
         else
-            debugLog("pickup does not match")
             local newMatch = FindMatchingPickup(x, y, z)
             if newMatch then
                 HandleProspectingPickup(player, newMatch, x, y, z)
             end
         end
     else
-        debugLog("target does not exist?")
     end
 end
 
-RegisterServerEvent("prospecting:onCollected")
-AddEventHandler("prospecting:onCollected", function(player, resource, data, x, y, z)
-    local player = 6
-    local data = "loc1"
-    local player = player
-    local Player = QBCore.Functions.GetPlayer(player)
+local function AddItem(id, name, amount)
+    if Config.Core == "QBCore" then
+        local Player = QBCore.Functions.GetPlayer(id)
+        Player.Functions.AddItem(name, amount)
+        TriggerClientEvent("inventory:client:ItemBox", id, QBCore.Shared.Items[name], "add")
+    elseif Config.Core == "ESX" then
+        local xPlayer = ESX.GetPlayerFromId(id)
+        xPlayer.addInventoryItem(name, amount)
+    end
+end
+
+function OnCollected(player, resource, data, x, y, z)
+    
     local items = {}
     local randomizer = math.random(1, 100)
     if randomizer < 5 then
@@ -99,34 +98,24 @@ AddEventHandler("prospecting:onCollected", function(player, resource, data, x, y
     end
     local item = items[math.random(1, #items)]
     local amount = math.random(item.min, item.max)
-    Player.Functions.AddItem(item.name, amount)
-    TriggerClientEvent("inventory:client:ItemBox", player, QBCore.Shared.Items[item.name], "add")
-end)
+    AddItem(player, item.name, amount)
+end
 
 --[[ Export handling ]]
 
 function AddProspectingTarget(x, y, z, data)
     local resource = GetInvokingResource()
-    debugLog("adding prospecting target at", vector3(x, y, z), "with data", data)
     InsertProspectingTarget(resource, x, y, z, data)
 end
-AddEventHandler("prospecting:AddProspectingTarget", function(x, y, z, data)
-    AddProspectingTarget(x, y, z, data)
-end)
 
 function AddProspectingTargets(list)
     local resource = GetInvokingResource()
-    debugLog("adding prospecting targets")
     InsertProspectingTargets(resource, list)
     
 end
-AddEventHandler("prospecting:AddProspectingTargets", function(list)
-    AddProspectingTargets(list)
-end)
 
 function StartProspecting(player)
     if not PROSPECTING_STATUS[player] then
-        debugLog("forcing", player, "to start")
         TriggerClientEvent("prospecting:forceStart", player)
     end
 end
@@ -136,7 +125,6 @@ end)
 
 function StopProspecting(player)
     if PROSPECTING_STATUS[player] then
-        debugLog("forcing", player, "to stop")
         TriggerClientEvent("prospecting:forceStop", player)
     end
 end
@@ -177,8 +165,9 @@ AddEventHandler("prospecting:userStartedProspecting", function()
 end)
 
 -- When the client collects a node
-RegisterServerEvent("prospecting:userCollectedNode")
-AddEventHandler("prospecting:userCollectedNode", function(index, x, y, z)
+-- RegisterServerEvent("prospecting:userCollectedNode")
+-- AddEventHandler("prospecting:userCollectedNode", function(index, x, y, z)
+lib.callback.register("prospecting:userCollectedNode", function(source, index, x, y, z)
     local player = source
     if PROSPECTING_STATUS[player] then
         HandleProspectingPickup(player, index, x, y, z)
@@ -196,16 +185,24 @@ end)
 --command to start and stop prospecting
 
 CreateThread(function()
-    QBCore.Functions.CreateUseableItem("prop_chain", function(source, item)
-        local Player = QBCore.Functions.GetPlayer(source)
-        if Player.Functions.GetItemByName(item.name) ~= nil then
+    if Config.Core == "QBCore" then
+        QBCore.Functions.CreateUseableItem(Config.DetectorItem, function(source, item)
             if Prospecting.IsProspecting(source) then
                 Prospecting.StopProspecting(source)
             else
                 Prospecting.StartProspecting(source)
             end
-        end
-    end)
+            
+        end)
+    elseif Config.Core == "ESX" then
+        ESX.RegisterUsableItem(Config.DetectorItem, function(source)
+            if Prospecting.IsProspecting(source) then
+                Prospecting.StopProspecting(source)
+            else
+                Prospecting.StartProspecting(source)
+            end
+        end)
+    end
 end)
 
 
@@ -233,6 +230,5 @@ function GenerateCoords(coords, data, zoneSize, zoneLocations)
 		coordY = coords.y + modY
 		coordslist[#coordslist + 1] = {x = coordX, y = coordY, z = coords.z, data = data}
 	end
-    print(json.encode(coordslist))
     AddProspectingTargets(coordslist)
 end

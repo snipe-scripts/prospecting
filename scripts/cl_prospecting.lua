@@ -1,16 +1,35 @@
-QBCore = exports["qb-core"]:GetCoreObject()
+QBCore, ESX = nil, nil
+if Config.Core == "QBCore" then
+    QBCore = exports['qb-core']:GetCoreObject()
+elseif Config.Core == "ESX" then
+    ESX = exports['es_extended']:getSharedObject()
+end
+
 
 local ShowInteraction = false
 
-local DEBUG = false
-local function debugLog() end
-if DEBUG then debugLog = function(...)
-    print(...)
-end end
+local targetPool = {}
 
-RegisterNetEvent("QBCore:Client:OnPlayerLoaded")
-AddEventHandler("QBCore:Client:OnPlayerLoaded", function()
+local maxTargetRange = 200.0
+local targets = {}
+
+RegisterNetEvent(Config.PlayerLoadedEvent)
+AddEventHandler(Config.PlayerLoadedEvent, function()
     TriggerServerEvent("prospecting:userRequestsLocations")
+end)
+
+local function RemoveTargetIndex(coords)
+    for index, target in next, targetPool do
+        local targetCoords = target[1]
+        if vec3(targetCoords.x, targetCoords.y, targetCoords.z) == coords then
+            table.remove(targetPool, index)
+            break
+        end
+    end
+end
+
+RegisterNetEvent("prospecting:client:removeTarget", function (coords)
+    RemoveTargetIndex(coords)
 end)
 
 
@@ -22,15 +41,13 @@ function EnsureAnimDict(dict)
 end
 function EnsureModel(model)
     if not IsModelInCdimage(model) then
-        debugLog("model", model, "not in cd image")
+        print("model", model, "not in cd image")
     else
         if not HasModelLoaded(model) then
-            debugLog("loading", model)
             RequestModel(model)
             while not HasModelLoaded(model) do
                 Wait(0)
             end
-            debugLog("successfully loaded", model)
         end
 	end
 end
@@ -57,16 +74,11 @@ function PlayAnim(ped, dict, anim)
     PlayAnimFlags(ped, dict, anim, 0)
 end
 
-local targetPool = {}
-
-local maxTargetRange = 200.0
-local targets = {}
 
 
 RegisterNetEvent("prospecting:setTargetPool")
 AddEventHandler("prospecting:setTargetPool", function(pool)
     targetPool = {}
-    debugLog("new targets", json.encode(pool))
     for n, pos in next, pool do
         targetPool[n] = {vector3(pos[1], pos[2], pos[3]), pos[4], n}
     end
@@ -202,7 +214,8 @@ function DigTarget(index)
     local pos = target[1]
    
     DigSequence(function()
-        TriggerServerEvent("prospecting:userCollectedNode", index, pos.x, pos.y, pos.z)
+        -- TriggerServerEvent("prospecting:userCollectedNode", index, pos.x, pos.y, pos.z)
+        lib.callback.await("prospecting:userCollectedNode", false, index, pos.x, pos.y, pos.z)
     end)
     Wait(5000)
     StopProspecting()
@@ -236,9 +249,7 @@ AddEventHandler("onResourceStop", function(resource)
 end)
 
 function StartProspecting()
-    debugLog("trying to start")
     if not isProspecting then
-        debugLog("starting")
         ProspectingThreads()
     end
 end
@@ -263,7 +274,6 @@ end)
 
 function ProspectingThreads()
     if IsProspecting then return false end
-    debugLog("thread init")
     TriggerServerEvent("prospecting:userStartedProspecting")
     isProspecting = true
     didCancelProspecting = false
@@ -274,7 +284,6 @@ function ProspectingThreads()
     end
     -- Prospecting handler
     CreateThread(function()
-        debugLog("thread loop")
         AttachEntity(PlayerPedId(), "w_am_digiscanner")
         while isProspecting do
             Wait(0)
@@ -494,8 +503,7 @@ end
 CreateThread(function()
     if Config.ShowBlip then
         for _, zone in next, Config.Zones do
-            print(zone.coords.x, zone.coords.y, zone.coords.z, zone.zoneSize)
-            local blip = AddBlipForRadius(zone.coords.x, zone.coords.y, zone.coords.z, 100.0)
+            local blip = AddBlipForRadius(zone.coords.x, zone.coords.y, zone.coords.z, zone.zoneSize * 1.0) 
             SetBlipColour(blip, 1)
             SetBlipAlpha(blip, 55)
 
