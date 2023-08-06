@@ -22,7 +22,9 @@ Config.Zones = {
     [2] = {coords = vector3(1615.378, 2095.902, 85.007), data = "loc2", zoneSize = 100, zoneLocations = 100},
 }
 
-Config.DefaultItems = {"metalscrap"} -- will be selected if you dont put the common, rare and epic items in the config
+Config.DefaultItems = {
+    [1] = {name = "steel", min = 1, max = 2} 
+} -- will be selected if you dont put the common, rare and epic items in the config
 
 Config.Items = {
     ["loc1"] = {
