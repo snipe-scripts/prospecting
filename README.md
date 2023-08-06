@@ -1,4 +1,4 @@
-# Prospecting ( WIP for QBCore )
+# Prospecting QBCore (WIP for ESX)
 
 ## Goals
 - Remove dependency with instructional buttons
