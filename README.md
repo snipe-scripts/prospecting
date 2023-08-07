@@ -13,7 +13,7 @@ https://github.com/glitchdetector/fivem-prospecting
 
 ### ESX
 ```sql
-INSERT INTO `items` (`name`, `label`, `weight`, `rare`, `can_remove`) VALUES ('bodycam', 'Body Cam', 1, 0, 1)
+INSERT INTO `items` (`name`, `label`, `weight`, `rare`, `can_remove`) VALUES ('detector', 'Metal Detector', 1, 0, 1)
 ```
 
 ## Support
