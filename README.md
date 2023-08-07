@@ -3,8 +3,11 @@
 ## Original Github Repository
 https://github.com/glitchdetector/fivem-prospecting
 
-## Installation
-- Add metaldetector item in your items.lua
+## Resource Installation
+* Download the repository
+* Put the `prospecting` folder in your resources directory. Make sure the resource is named **prospecting**
+* Add `ensure prospecting` to your server config
+* Add metaldetector item in your items.lua
 
 ### QBCore
 ```lua
@@ -20,8 +23,7 @@ INSERT INTO `items` (`name`, `label`, `weight`, `rare`, `can_remove`) VALUES ('d
 
 - Discord: https://discord.gg/VGYkkAYVv2
 - Website : https://snipe.tebex.io
-- If you have a custom mlo and have a screen in there which you want to use with this script, make sure you make the polyzones and target before you ask in my discord on how to find texture dictionary and texture name. I can only help with the texture dictionaries and texture name if you do the other steps first.
-
+  
 ## Goals
 - Remove dependency with instructional buttons - **Done**
 - Make it item based - **Done**
