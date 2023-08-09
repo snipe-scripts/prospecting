@@ -28,7 +28,7 @@ server_scripts {
 }
 
 file 'stream/gen_w_am_metaldetector.ytyp'
-data_file 'DLC_ITYP_REQUEST' 'stream/w_am_metaldetector.ytyp
+data_file 'DLC_ITYP_REQUEST' 'stream/w_am_metaldetector.ytyp'
 
 server_exports {
     'AddProspectingTarget', -- x, y, z, data
