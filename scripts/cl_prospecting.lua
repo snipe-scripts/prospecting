@@ -184,7 +184,7 @@ function DigSequence(cb)
     if cb then cb() end
     Wait(3000)
     ClearPedTasks(PlayerPedId())
-    AttachEntity(PlayerPedId(), "w_am_digiscanner")
+    AttachEntity(PlayerPedId(), "w_am_metaldetector")
 end
 
 function ShowHelp(text, n)
@@ -288,7 +288,7 @@ function ProspectingThreads()
     end
     -- Prospecting handler
     CreateThread(function()
-        AttachEntity(PlayerPedId(), "w_am_digiscanner")
+        AttachEntity(PlayerPedId(), "w_am_metaldetector")
         while isProspecting do
             Wait(0)
             local ped = PlayerPedId()
