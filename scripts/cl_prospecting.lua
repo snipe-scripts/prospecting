@@ -125,24 +125,11 @@ local CONTROLS = {
 }
 
 local entityOffsets = {
-    ["w_am_digiscanner"] = {
-		bone = 18905,
-        offset = vector3(0.15, 0.1, 0.0),
-        rotation = vector3(270.0, 90.0, 80.0),
-	},
-    -- cant get the fucking model to be standalone so im replacing the digiscanner
-    -- nobody uses it anyways so w/e
     ["w_am_metaldetector"] = {
 		bone = 18905,
         offset = vector3(0.15, 0.1, 0.0),
         rotation = vector3(270.0, 90.0, 80.0),
 	},
-    -- original digiscanner stuff
-    -- ["w_am_digiscanner"] = {
-	-- 	bone = 57005,
-    --     offset = vector3(0.1, 0.1, 0.0),
-    --     rotation = vector3(270.0, 90.0, 90.0),
-	-- },
 }
 
 local attachedEntities = {}
@@ -184,7 +171,7 @@ function DigSequence(cb)
     if cb then cb() end
     Wait(3000)
     ClearPedTasks(PlayerPedId())
-    AttachEntity(PlayerPedId(), "w_am_digiscanner")
+    AttachEntity(PlayerPedId(), "w_am_metaldetector")
 end
 
 function ShowHelp(text, n)
@@ -288,7 +275,7 @@ function ProspectingThreads()
     end
     -- Prospecting handler
     CreateThread(function()
-        AttachEntity(PlayerPedId(), "w_am_digiscanner")
+        AttachEntity(PlayerPedId(), "w_am_metaldetector")
         while isProspecting do
             Wait(0)
             local ped = PlayerPedId()
